@@ -1,3 +1,4 @@
 pandas
 geopandas
 openpyxl
+s3fs
