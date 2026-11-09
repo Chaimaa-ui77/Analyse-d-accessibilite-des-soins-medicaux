@@ -2,3 +2,5 @@ pandas
 geopandas
 openpyxl
 s3fs
+ijson
+requests
