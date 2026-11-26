@@ -1,0 +1,1762 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.11.9">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Partie 2 : fusion avec les données INSEE – Accessibilité aux soins médicaux en France</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/scrollable-regions/scrollable-regions.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-63b5708e65d6cd79cd7618c58d0c21e7.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-8ec3ca4879fa974964d0bc9e6e43aa3e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed quarto-light"><a id="quarto-skip-link" class="visually-hidden-focusable" href="#quarto-document-content">Skip to main content</a>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark" aria-label="Site">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Accessibilité aux soins médicaux en France</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Accueil</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../methodologie.html"> 
+<span class="menu-text">Méthodologie</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../resultats.html"> 
+<span class="menu-text">Résultats</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../inegalites.html"> 
+<span class="menu-text">Inégalités territoriales</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../cartes.html"> 
+<span class="menu-text">Cartes</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../limites.html"> 
+<span class="menu-text">Limites</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/Chaimaa-ui77/Analyse-d-accessibilite-des-soins-medicaux"> <i class="bi bi-github" role="img" aria-label="GitHub">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+            <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" aria-labelledby="toc-title" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul class="collapse">
+  <li><a href="#partie-3-fusion-avec-loffre-de-soins-de-ville-rpps" id="toc-partie-3-fusion-avec-loffre-de-soins-de-ville-rpps" class="nav-link active" data-scroll-target="#partie-3-fusion-avec-loffre-de-soins-de-ville-rpps">Partie 3 : fusion avec l’offre de soins de ville (RPPS)</a></li>
+  <li><a href="#contrôle-de-la-couverture-géographique-du-rpps" id="toc-contrôle-de-la-couverture-géographique-du-rpps" class="nav-link" data-scroll-target="#contrôle-de-la-couverture-géographique-du-rpps">Contrôle de la couverture géographique du RPPS</a></li>
+  <li><a href="#fusion-finale-avec-loffre-de-soins-de-ville" id="toc-fusion-finale-avec-loffre-de-soins-de-ville" class="nav-link" data-scroll-target="#fusion-finale-avec-loffre-de-soins-de-ville">Fusion finale avec l’offre de soins de ville</a></li>
+  <li><a href="#vérifications-finales" id="toc-vérifications-finales" class="nav-link" data-scroll-target="#vérifications-finales">Vérifications finales</a></li>
+  <li><a href="#sauvegarde-de-la-base-communale-finale" id="toc-sauvegarde-de-la-base-communale-finale" class="nav-link" data-scroll-target="#sauvegarde-de-la-base-communale-finale">Sauvegarde de la base communale finale</a></li>
+  <li><a href="#résultat" id="toc-résultat" class="nav-link" data-scroll-target="#résultat">Résultat</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content" tabindex="-1">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Partie 2 : fusion avec les données INSEE</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div id="0637c45d" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>base <span class="op">=</span> <span class="st">"https://minio.lab.sspcloud.fr/mangane/Projet_PDS_2026/processed/"</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>fs <span class="op">=</span> pd.read_csv(base <span class="op">+</span> <span class="st">"finess_sygen_final.csv"</span>, dtype<span class="op">=</span><span class="bu">str</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>insee <span class="op">=</span> pd.read_csv(base <span class="op">+</span> <span class="st">"insee_communes_final.csv"</span>, dtype<span class="op">=</span><span class="bu">str</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="2eddc25f" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> harmoniser(code):</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> pd.isna(code):</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> code</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="st">"75101"</span> <span class="op">&lt;=</span> code <span class="op">&lt;=</span> <span class="st">"75120"</span>:</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"75056"</span>   <span class="co"># Paris</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="st">"69381"</span> <span class="op">&lt;=</span> code <span class="op">&lt;=</span> <span class="st">"69389"</span>:</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"69123"</span>   <span class="co"># Lyon</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="st">"13201"</span> <span class="op">&lt;=</span> code <span class="op">&lt;=</span> <span class="st">"13216"</span>:</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">"13055"</span>   <span class="co"># Marseille</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> code</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>fs2 <span class="op">=</span> fs.dropna(subset<span class="op">=</span>[<span class="st">"CODGEO"</span>]).copy()</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>fs2[<span class="st">"CODGEO_ORIG"</span>] <span class="op">=</span> fs2[<span class="st">"CODGEO"</span>]</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>fs2[<span class="st">"CODGEO"</span>] <span class="op">=</span> fs2[<span class="st">"CODGEO"</span>].<span class="bu">map</span>(harmoniser)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>fs3 <span class="op">=</span> fs2[fs2[<span class="st">"ETAT"</span>] <span class="op">==</span> <span class="st">"A"</span>].copy()</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">len</span>(fs), <span class="bu">len</span>(fs2), <span class="bu">len</span>(fs3))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>3988 3940 3921</code></pre>
+</div>
+</div>
+<div id="d1d764a2" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>cols_num <span class="op">=</span> [<span class="st">"LIT_MED"</span>, <span class="st">"LIT_CHI"</span>, <span class="st">"LIT_OBS"</span>, <span class="st">"LIT_MCO"</span>, <span class="st">"LIT_SMR"</span>, <span class="st">"LIT_USLD"</span>,</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>            <span class="st">"NB_SCAN"</span>, <span class="st">"NB_IRM"</span>, <span class="st">"NB_MAMM"</span>]</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> c <span class="kw">in</span> cols_num:</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    fs3[c] <span class="op">=</span> pd.to_numeric(fs3[c], errors<span class="op">=</span><span class="st">"coerce"</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>hopitaux <span class="op">=</span> fs3.groupby(<span class="st">"CODGEO"</span>)[cols_num].<span class="bu">sum</span>(min_count<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>hopitaux[<span class="st">"nb_etablissements"</span>] <span class="op">=</span> fs3.groupby(<span class="st">"CODGEO"</span>)[<span class="st">"FI"</span>].count()</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>hopitaux <span class="op">=</span> hopitaux.reset_index()</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(hopitaux.shape)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(hopitaux[<span class="st">"nb_etablissements"</span>].<span class="bu">sum</span>())</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(hopitaux.head())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>(1714, 11)
+3921
+  CODGEO  LIT_MED  LIT_CHI  LIT_OBS  LIT_MCO  LIT_SMR  LIT_USLD  NB_SCAN  \
+0  01004     31.0     27.0     15.0     73.0      NaN       NaN      NaN   
+1  01033      NaN      NaN      NaN      NaN      NaN       NaN      NaN   
+2  01034     56.0     19.0      8.0     83.0     40.0       NaN      1.0   
+3  01053     26.0     44.0      NaN     70.0    156.0      11.0      0.0   
+4  01082      NaN      NaN      NaN      NaN     70.0       NaN      NaN   
+
+   NB_IRM  NB_MAMM  nb_etablissements  
+0     NaN      NaN                  3  
+1     NaN      NaN                  1  
+2     0.0      1.0                  2  
+3     0.0      0.0                  5  
+4     NaN      NaN                  1  </code></pre>
+</div>
+</div>
+<div id="5b9c5c04" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># communes avec établissement absentes de l'INSEE </span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">sorted</span>(<span class="bu">set</span>(hopitaux[<span class="st">"CODGEO"</span>]) <span class="op">-</span> <span class="bu">set</span>(insee[<span class="st">"CODGEO"</span>])))</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>fusion <span class="op">=</span> insee.merge(hopitaux, on<span class="op">=</span><span class="st">"CODGEO"</span>, how<span class="op">=</span><span class="st">"left"</span>, validate<span class="op">=</span><span class="st">"one_to_one"</span>)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>fusion[<span class="st">"nb_etablissements"</span>] <span class="op">=</span> fusion[<span class="st">"nb_etablissements"</span>].fillna(<span class="dv">0</span>)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(fusion.shape)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"communes avec au moins 1 établissement :"</span>, (fusion[<span class="st">"nb_etablissements"</span>] <span class="op">&gt;</span> <span class="dv">0</span>).<span class="bu">sum</span>())</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(fusion[fusion[<span class="st">"CODGEO"</span>] <span class="op">==</span> <span class="st">"01004"</span>].T)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>['97123', '97127', '97502', '97606', '97611', '97615']
+(34858, 45)
+communes avec au moins 1 établissement : 1708
+                                                2
+CODGEO                                      01004
+LIBGEO                          Ambérieu-en-Bugey
+SEXE1_AGEPYR1000                 291.774098436508
+SEXE1_AGEPYR1003                 327.193219345162
+SEXE1_AGEPYR1006                 525.370991705619
+SEXE1_AGEPYR1011                 719.637561687717
+SEXE1_AGEPYR1018                 733.735171978173
+SEXE1_AGEPYR1025                 1581.24638491537
+SEXE1_AGEPYR1040                 1344.79206887329
+SEXE1_AGEPYR1055                 833.964092706198
+SEXE1_AGEPYR1065                 888.674859386373
+SEXE1_AGEPYR1080                 244.547759254982
+SEXE2_AGEPYR1000                 323.969423155764
+SEXE2_AGEPYR1003                 283.369968380778
+SEXE2_AGEPYR1006                  467.59143190407
+SEXE2_AGEPYR1011                 664.536778087955
+SEXE2_AGEPYR1018                  736.65584160782
+SEXE2_AGEPYR1025                 1518.09309948778
+SEXE2_AGEPYR1040                   1408.495207245
+SEXE2_AGEPYR1055                 984.296765645123
+SEXE2_AGEPYR1065                 1151.50422664886
+SEXE2_AGEPYR1080                 524.551049547455
+DENS                                          2.0
+LIBDENS                      Urbain intermédiaire
+PMUN22                                    15554.0
+P1                                            0.0
+P2                               96.9337622634728
+P3                               3.06623773652724
+DENS_AAV                                      2.0
+LIBDENS_AAV                  Urbain intermédiaire
+DENS7                                         2.0
+LIBDENS7           Centres urbains intermédiaires
+MED21                                       21660
+TP6021                                       17.0
+RD21                                          3.1
+LIT_MED                                      31.0
+LIT_CHI                                      27.0
+LIT_OBS                                      15.0
+LIT_MCO                                      73.0
+LIT_SMR                                       NaN
+LIT_USLD                                      NaN
+NB_SCAN                                       NaN
+NB_IRM                                        NaN
+NB_MAMM                                       NaN
+nb_etablissements                             3.0</code></pre>
+</div>
+</div>
+<div id="0b6cf91a" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"établissements dans la fusion :"</span>, fusion[<span class="st">"nb_etablissements"</span>].<span class="bu">sum</span>(), <span class="st">"sur"</span>, <span class="bu">len</span>(fs3))</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"codes 97 dans l'INSEE :"</span>, insee[<span class="st">"CODGEO"</span>].<span class="bu">str</span>.startswith(<span class="st">"97"</span>).<span class="bu">sum</span>())</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(fs3[fs3[<span class="st">"CODGEO"</span>].isin([<span class="st">'97123'</span>, <span class="st">'97127'</span>, <span class="st">'97502'</span>, <span class="st">'97606'</span>, <span class="st">'97611'</span>, <span class="st">'97615'</span>])][[<span class="st">"CODGEO"</span>, <span class="st">"NOM"</span>, <span class="st">"CATEGORIE"</span>]])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>établissements dans la fusion : 3906.0 sur 3921
+codes 97 dans l'INSEE : 112
+     CODGEO                                                NOM CATEGORIE
+3853  97123  CENTRE HOSPITALIER IRENEE DE BRUYN EX HÔPITAL ...       106
+3855  97127          CENTRE HOSPITALIER LOUIS CONSTANT FLEMING       355
+3868  97127                      ANTENNE AUDRA DE SAINT MARTIN       146
+3875  97127                                  HAD  ILES DU NORD       127
+3879  97123  CH LOUIS CONSTANT FLEMING - ANTENNE SMUR DE SA...       355
+3880  97123            CLINIQUE DE CHOISY HAD SAINT BARTHELEMY       127
+3881  97127                                    CLINIQUE WATAKI       109
+3980  97502                 CENTRE HOSPITALIER  FRANCOIS DUNAN       355
+3981  97611                      CENTRE HOSPITALIER DE MAYOTTE       355
+3982  97611               UNITE AUTODIALYSE ASSISTEE MAMOUDZOU       141
+3983  97611                                         UDM KAWENI       141
+3984  97606                   UNITE D'AUTODIALYSE M'RAMADOUDOU       141
+3985  97615  SOINS DE SUITE ET DE READAPTATION/ CENTRE DE R...       355
+3986  97611                                        SAS MDZHADE       127
+3987  97611                          CLINIQUE UHAJU FLAMBOYANT       109</code></pre>
+</div>
+</div>
+<div id="009545bb" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>outre_mer <span class="op">=</span> insee[insee[<span class="st">"CODGEO"</span>].<span class="bu">str</span>.startswith(<span class="st">"97"</span>)]</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">len</span>(outre_mer))</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(outre_mer[<span class="st">"CODGEO"</span>].<span class="bu">str</span>[:<span class="dv">3</span>].value_counts().sort_index())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>112
+CODGEO
+971    32
+972    34
+973    22
+974    24
+Name: count, dtype: int64</code></pre>
+</div>
+</div>
+<p><strong>Périmètre.</strong> 15 établissements actifs (0,4 % du total), situés à Saint-Martin, Saint-Barthélemy, Saint-Pierre-et-Miquelon et Mayotte, sont exclus : ces territoires sont absents des tables INSEE de population, de revenus et de densité, ce qui empêche de calculer un indicateur pour eux. L’analyse couvre la France métropolitaine et les quatre départements d’outre-mer historiques (Guadeloupe, Martinique, Guyane, La Réunion)</p>
+<div id="8f024de1" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>hors_insee <span class="op">=</span> hopitaux[<span class="op">~</span>hopitaux[<span class="st">"CODGEO"</span>].isin(insee[<span class="st">"CODGEO"</span>])]</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">len</span>(hors_insee), <span class="st">"communes hors table INSEE,"</span>,</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>      <span class="bu">int</span>(hors_insee[<span class="st">"nb_etablissements"</span>].<span class="bu">sum</span>()), <span class="st">"établissements exclus"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>6 communes hors table INSEE, 15 établissements exclus</code></pre>
+</div>
+</div>
+<div id="9d58b447" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>fusion[<span class="st">"nb_etablissements"</span>] <span class="op">=</span> fusion[<span class="st">"nb_etablissements"</span>].fillna(<span class="dv">0</span>).astype(<span class="bu">int</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="efa3f8f2" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(fusion[<span class="st">"nb_etablissements"</span>].dtype)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(fusion[<span class="st">"nb_etablissements"</span>].isna().<span class="bu">sum</span>())</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>((fusion[<span class="st">"nb_etablissements"</span>] <span class="op">==</span> <span class="dv">0</span>).<span class="bu">sum</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>int64
+0
+33150</code></pre>
+</div>
+</div>
+<div id="28ea7350" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>fusion.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="10">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">CODGEO</th>
+<th data-quarto-table-cell-role="th">LIBGEO</th>
+<th data-quarto-table-cell-role="th">SEXE1_AGEPYR1000</th>
+<th data-quarto-table-cell-role="th">SEXE1_AGEPYR1003</th>
+<th data-quarto-table-cell-role="th">SEXE1_AGEPYR1006</th>
+<th data-quarto-table-cell-role="th">SEXE1_AGEPYR1011</th>
+<th data-quarto-table-cell-role="th">SEXE1_AGEPYR1018</th>
+<th data-quarto-table-cell-role="th">SEXE1_AGEPYR1025</th>
+<th data-quarto-table-cell-role="th">SEXE1_AGEPYR1040</th>
+<th data-quarto-table-cell-role="th">SEXE1_AGEPYR1055</th>
+<th data-quarto-table-cell-role="th">...</th>
+<th data-quarto-table-cell-role="th">LIT_MED</th>
+<th data-quarto-table-cell-role="th">LIT_CHI</th>
+<th data-quarto-table-cell-role="th">LIT_OBS</th>
+<th data-quarto-table-cell-role="th">LIT_MCO</th>
+<th data-quarto-table-cell-role="th">LIT_SMR</th>
+<th data-quarto-table-cell-role="th">LIT_USLD</th>
+<th data-quarto-table-cell-role="th">NB_SCAN</th>
+<th data-quarto-table-cell-role="th">NB_IRM</th>
+<th data-quarto-table-cell-role="th">NB_MAMM</th>
+<th data-quarto-table-cell-role="th">nb_etablissements</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>01001</td>
+<td>L'Abergement-Clémenciat</td>
+<td>19.0</td>
+<td>15.0</td>
+<td>36.0</td>
+<td>42.0</td>
+<td>15.0</td>
+<td>77.0</td>
+<td>87.0</td>
+<td>66.0</td>
+<td>...</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>01002</td>
+<td>L'Abergement-de-Varey</td>
+<td>3.0</td>
+<td>6.0</td>
+<td>7.0</td>
+<td>22.0</td>
+<td>6.0</td>
+<td>20.0</td>
+<td>39.0</td>
+<td>12.0</td>
+<td>...</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>01004</td>
+<td>Ambérieu-en-Bugey</td>
+<td>291.774098436508</td>
+<td>327.193219345162</td>
+<td>525.370991705619</td>
+<td>719.637561687717</td>
+<td>733.735171978173</td>
+<td>1581.24638491537</td>
+<td>1344.79206887329</td>
+<td>833.964092706198</td>
+<td>...</td>
+<td>31.0</td>
+<td>27.0</td>
+<td>15.0</td>
+<td>73.0</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>3</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>01005</td>
+<td>Ambérieux-en-Dombes</td>
+<td>36.2624041600494</td>
+<td>37.108922388434</td>
+<td>65.9432761131205</td>
+<td>80.0820466018419</td>
+<td>54.4457784678517</td>
+<td>193.448597496766</td>
+<td>196.440979404838</td>
+<td>137.738813251787</td>
+<td>...</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>01006</td>
+<td>Ambléon</td>
+<td>2.0</td>
+<td>1.0</td>
+<td>2.0</td>
+<td>1.0</td>
+<td>4.0</td>
+<td>12.0</td>
+<td>11.0</td>
+<td>14.0</td>
+<td>...</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+
+<p>5 rows × 45 columns</p>
+</div>
+</div>
+</div>
+<div id="04558eb9" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>chemin <span class="op">=</span> <span class="st">"s3://emma457/Projet_python/fusion_insee_hopitaux.csv"</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>opts <span class="op">=</span> {<span class="st">"client_kwargs"</span>: {<span class="st">"endpoint_url"</span>: <span class="st">"https://"</span> <span class="op">+</span> os.environ[<span class="st">"AWS_S3_ENDPOINT"</span>]}}</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>fusion.to_csv(</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>    chemin,</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>    index<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>    storage_options<span class="op">=</span>opts</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Fichier sauvegardé :"</span>, chemin)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">AccessDenied</span>                              Traceback (most recent call last)
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">/opt/python/lib/python3.14/site-packages/s3fs/core.py:169</span>, in <span class="ansi-cyan-fg">_error_wrapper</span><span class="ansi-blue-fg">(func, args, kwargs, retries)</span>
+<span class="ansi-green-fg">    168</span> <span style="font-weight:bold;color:rgb(0,135,0)">try</span>:
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">169</span>     <span style="font-weight:bold;color:rgb(0,135,0)">return</span> <span style="font-weight:bold;color:rgb(0,135,0)">await</span> func(*args, **kwargs)
+<span class="ansi-green-fg">    170</span> <span style="font-weight:bold;color:rgb(0,135,0)">except</span> S3_RETRYABLE_ERRORS <span style="font-weight:bold;color:rgb(0,135,0)">as</span> e:
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">/opt/python/lib/python3.14/site-packages/aiobotocore/context.py:36</span>, in <span class="ansi-cyan-fg">with_current_context.&lt;locals&gt;.decorator.&lt;locals&gt;.wrapper</span><span class="ansi-blue-fg">(*args, **kwargs)</span>
+<span class="ansi-green-fg">     35</span>     <span style="font-weight:bold;color:rgb(0,135,0)">await</span> resolve_awaitable(hook())
+<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">36</span> <span style="font-weight:bold;color:rgb(0,135,0)">return</span> <span style="font-weight:bold;color:rgb(0,135,0)">await</span> func(*args, **kwargs)
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">/opt/python/lib/python3.14/site-packages/aiobotocore/client.py:449</span>, in <span class="ansi-cyan-fg">AioBaseClient._make_api_call</span><span class="ansi-blue-fg">(self, operation_name, api_params)</span>
+<span class="ansi-green-fg">    448</span>     error_class = <span style="color:rgb(0,135,0)">self</span>.exceptions.from_code(error_code)
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">449</span>     <span style="font-weight:bold;color:rgb(0,135,0)">raise</span> error_class(parsed_response, operation_name)
+<span class="ansi-green-fg">    450</span> <span style="font-weight:bold;color:rgb(0,135,0)">else</span>:
+
+<span class="ansi-red-fg">AccessDenied</span>: An error occurred (AccessDenied) when calling the PutObject operation: Access Denied.
+
+The above exception was the direct cause of the following exception:
+
+<span class="ansi-red-fg">PermissionError</span>                           Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[11]</span><span class="ansi-green-fg">, line 6</span>
+<span class="ansi-green-fg">      2</span> 
+<span class="ansi-green-fg">      3</span> chemin = <span class="ansi-yellow-fg">"s3://emma457/Projet_python/fusion_insee_hopitaux.csv"</span>
+<span class="ansi-green-fg">      4</span> opts = {<span class="ansi-yellow-fg">"client_kwargs"</span>: {<span class="ansi-yellow-fg">"endpoint_url"</span>: <span class="ansi-yellow-fg">"https://"</span> + os.environ[<span class="ansi-yellow-fg">"AWS_S3_ENDPOINT"</span>]}}
+<span class="ansi-green-fg">      5</span> 
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">6</span> fusion.to_csv(
+<span class="ansi-green-fg">      7</span>     chemin,
+<span class="ansi-green-fg">      8</span>     index=<span style="font-weight:bold;color:rgb(0,135,0)">False</span>,
+<span class="ansi-green-fg">      9</span>     storage_options=opts
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">/opt/python/lib/python3.14/site-packages/pandas/core/generic.py:4026</span>, in <span class="ansi-cyan-fg">NDFrame.to_csv</span><span class="ansi-blue-fg">(self, path_or_buf, sep, na_rep, float_format, columns, header, index, index_label, mode, encoding, compression, quoting, quotechar, lineterminator, chunksize, date_format, doublequote, escapechar, decimal, errors, storage_options)</span>
+<span class="ansi-green-fg">   4022</span>             float_format=float_format,
+<span class="ansi-green-fg">   4023</span>             decimal=decimal,
+<span class="ansi-green-fg">   4024</span>         )
+<span class="ansi-green-fg">   4025</span> 
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">4026</span>         return DataFrameRenderer(formatter).to_csv(
+<span class="ansi-green-fg">   4027</span>             path_or_buf,
+<span class="ansi-green-fg">   4028</span>             lineterminator=lineterminator,
+<span class="ansi-green-fg">   4029</span>             sep=sep,
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">/opt/python/lib/python3.14/site-packages/pandas/io/formats/format.py:1027</span>, in <span class="ansi-cyan-fg">DataFrameRenderer.to_csv</span><span class="ansi-blue-fg">(self, path_or_buf, encoding, sep, columns, index_label, mode, compression, quoting, quotechar, lineterminator, chunksize, date_format, doublequote, escapechar, errors, storage_options)</span>
+<span class="ansi-green-fg">   1006</span>     created_buffer = <span style="font-weight:bold;color:rgb(0,135,0)">False</span>
+<span class="ansi-green-fg">   1008</span> csv_formatter = CSVFormatter(
+<span class="ansi-green-fg">   1009</span>     path_or_buf=path_or_buf,
+<span class="ansi-green-fg">   1010</span>     lineterminator=lineterminator,
+<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">   1025</span>     formatter=<span style="color:rgb(0,135,0)">self</span>.fmt,
+<span class="ansi-green-fg">   1026</span> )
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">1027</span> <span class="ansi-black-fg ansi-yellow-bg">csv_formatter</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">save</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">   1029</span> <span style="font-weight:bold;color:rgb(0,135,0)">if</span> created_buffer:
+<span class="ansi-green-fg">   1030</span>     <span style="font-weight:bold;color:rgb(0,135,0)">assert</span> <span style="color:rgb(0,135,0)">isinstance</span>(path_or_buf, StringIO)
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">/opt/python/lib/python3.14/site-packages/pandas/io/formats/csvs.py:251</span>, in <span class="ansi-cyan-fg">CSVFormatter.save</span><span class="ansi-blue-fg">(self)</span>
+<span class="ansi-green-fg">    247</span> <span style="font-style:italic" class="ansi-yellow-fg">"""</span>
+<span class="ansi-green-fg">    248</span> <span style="font-style:italic" class="ansi-yellow-fg">Create the writer &amp; save.</span>
+<span class="ansi-green-fg">    249</span> <span style="font-style:italic" class="ansi-yellow-fg">"""</span>
+<span class="ansi-green-fg">    250</span> <span style="font-style:italic;color:rgb(95,135,135)"># apply compression and byte/text conversion</span>
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">251</span> <span class="ansi-black-fg ansi-yellow-bg ansi-bold">with</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">get_handle</span><span class="ansi-black-fg ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">    252</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">filepath_or_buffer</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    253</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">mode</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    254</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">encoding</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">encoding</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    255</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">errors</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">errors</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    256</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">compression</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">compression</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    257</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">storage_options</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">storage_options</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    258</span> <span class="ansi-black-fg ansi-yellow-bg">)</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg ansi-bold">as</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">handles</span><span class="ansi-black-fg ansi-yellow-bg">:</span>
+<span class="ansi-green-fg">    259</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span style="font-style:italic" class="ansi-black-fg ansi-yellow-bg"># Note: self.encoding is irrelevant here</span>
+<span class="ansi-green-fg">    260</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span style="font-style:italic" class="ansi-black-fg ansi-yellow-bg"># error: Argument "quoting" to "writer" has incompatible type "int";</span>
+<span class="ansi-green-fg">    261</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span style="font-style:italic" class="ansi-black-fg ansi-yellow-bg"># expected "Literal[0, 1, 2, 3]"</span>
+<span class="ansi-green-fg">    262</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">writer</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">csvlib</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">writer</span><span class="ansi-black-fg ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">    263</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">handles</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">handle</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    264</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">lineterminator</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">lineterminator</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">    269</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">quotechar</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">quotechar</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    270</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    272</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">_save</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">/opt/python/lib/python3.14/site-packages/pandas/io/common.py:154</span>, in <span class="ansi-cyan-fg">IOHandles.__exit__</span><span class="ansi-blue-fg">(self, exc_type, exc_value, traceback)</span>
+<span class="ansi-green-fg">    148</span> <span style="font-weight:bold;color:rgb(0,135,0)">def</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg">__exit__</span>(
+<span class="ansi-green-fg">    149</span>     <span style="color:rgb(0,135,0)">self</span>,
+<span class="ansi-green-fg">    150</span>     exc_type: <span style="color:rgb(0,135,0)">type</span>[<span style="font-weight:bold;color:rgb(215,95,95)">BaseException</span>] | <span style="font-weight:bold;color:rgb(0,135,0)">None</span>,
+<span class="ansi-green-fg">    151</span>     exc_value: <span style="font-weight:bold;color:rgb(215,95,95)">BaseException</span> | <span style="font-weight:bold;color:rgb(0,135,0)">None</span>,
+<span class="ansi-green-fg">    152</span>     traceback: TracebackType | <span style="font-weight:bold;color:rgb(0,135,0)">None</span>,
+<span class="ansi-green-fg">    153</span> ) -&gt; <span style="font-weight:bold;color:rgb(0,135,0)">None</span>:
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">154</span>     <span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">close</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">/opt/python/lib/python3.14/site-packages/pandas/io/common.py:141</span>, in <span class="ansi-cyan-fg">IOHandles.close</span><span class="ansi-blue-fg">(self)</span>
+<span class="ansi-green-fg">    139</span>     <span style="color:rgb(0,135,0)">self</span>.created_handles.remove(<span style="color:rgb(0,135,0)">self</span>.handle)
+<span class="ansi-green-fg">    140</span> <span style="font-weight:bold;color:rgb(0,135,0)">for</span> handle <span style="font-weight:bold;color:rgb(175,0,255)">in</span> <span style="color:rgb(0,135,0)">self</span>.created_handles:
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">141</span>     <span class="ansi-black-fg ansi-yellow-bg">handle</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">close</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    142</span> <span style="color:rgb(0,135,0)">self</span>.created_handles = []
+<span class="ansi-green-fg">    143</span> <span style="color:rgb(0,135,0)">self</span>.is_wrapped = <span style="font-weight:bold;color:rgb(0,135,0)">False</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">/opt/python/lib/python3.14/site-packages/fsspec/spec.py:2289</span>, in <span class="ansi-cyan-fg">AbstractBufferedFile.close</span><span class="ansi-blue-fg">(self)</span>
+<span class="ansi-green-fg">   2287</span> <span style="font-weight:bold;color:rgb(0,135,0)">else</span>:
+<span class="ansi-green-fg">   2288</span>     <span style="font-weight:bold;color:rgb(0,135,0)">if</span> <span style="font-weight:bold;color:rgb(175,0,255)">not</span> <span style="color:rgb(0,135,0)">getattr</span>(<span style="color:rgb(0,135,0)">self</span>, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">forced</span><span class="ansi-yellow-fg">"</span>, <span style="font-weight:bold;color:rgb(0,135,0)">True</span>):
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">2289</span>         <span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">flush</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">force</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg ansi-bold">True</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">   2291</span>     <span style="font-weight:bold;color:rgb(0,135,0)">if</span> <span style="color:rgb(0,135,0)">self</span>.fs <span style="font-weight:bold;color:rgb(175,0,255)">is</span> <span style="font-weight:bold;color:rgb(175,0,255)">not</span> <span style="font-weight:bold;color:rgb(0,135,0)">None</span>:
+<span class="ansi-green-fg">   2292</span>         <span style="color:rgb(0,135,0)">self</span>.fs.invalidate_cache(<span style="color:rgb(0,135,0)">self</span>.path)
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">/opt/python/lib/python3.14/site-packages/fsspec/spec.py:2147</span>, in <span class="ansi-cyan-fg">AbstractBufferedFile.flush</span><span class="ansi-blue-fg">(self, force)</span>
+<span class="ansi-green-fg">   2144</span>         <span style="color:rgb(0,135,0)">self</span>.closed = <span style="font-weight:bold;color:rgb(0,135,0)">True</span>
+<span class="ansi-green-fg">   2145</span>         <span style="font-weight:bold;color:rgb(0,135,0)">raise</span>
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">2147</span> <span style="font-weight:bold;color:rgb(0,135,0)">if</span> <span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">_upload_chunk</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">final</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">force</span><span class="ansi-black-fg ansi-yellow-bg">)</span> <span style="font-weight:bold;color:rgb(175,0,255)">is</span> <span style="font-weight:bold;color:rgb(175,0,255)">not</span> <span style="font-weight:bold;color:rgb(0,135,0)">False</span>:
+<span class="ansi-green-fg">   2148</span>     <span style="color:rgb(0,135,0)">self</span>.offset += <span style="color:rgb(0,135,0)">self</span>.buffer.seek(<span class="ansi-green-fg">0</span>, <span class="ansi-green-fg">2</span>)
+<span class="ansi-green-fg">   2149</span>     <span style="color:rgb(0,135,0)">self</span>.buffer = io.BytesIO()
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">/opt/python/lib/python3.14/site-packages/s3fs/core.py:2788</span>, in <span class="ansi-cyan-fg">S3File._upload_chunk</span><span class="ansi-blue-fg">(self, final)</span>
+<span class="ansi-green-fg">   2785</span>             upload_part(<span style="color:rgb(0,135,0)">self</span>.buffer.read(<span style="color:rgb(0,135,0)">self</span>.part_max))
+<span class="ansi-green-fg">   2787</span> <span style="font-weight:bold;color:rgb(0,135,0)">if</span> <span style="color:rgb(0,135,0)">self</span>.autocommit <span style="font-weight:bold;color:rgb(175,0,255)">and</span> final:
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">2788</span>     <span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">commit</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">   2789</span> <span style="font-weight:bold;color:rgb(0,135,0)">else</span>:
+<span class="ansi-green-fg">   2790</span>     <span style="font-style:italic;color:rgb(95,135,135)"># update 'upload offset'</span>
+<span class="ansi-green-fg">   2791</span>     <span style="color:rgb(0,135,0)">self</span>.offset += <span style="color:rgb(0,135,0)">self</span>.buffer.tell()
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">/opt/python/lib/python3.14/site-packages/s3fs/core.py:2814</span>, in <span class="ansi-cyan-fg">S3File.commit</span><span class="ansi-blue-fg">(self)</span>
+<span class="ansi-green-fg">   2812</span>     <span style="font-weight:bold;color:rgb(0,135,0)">if</span> <span style="color:rgb(0,135,0)">self</span>.acl:
+<span class="ansi-green-fg">   2813</span>         kw[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">ACL</span><span class="ansi-yellow-fg">"</span>] = <span style="color:rgb(0,135,0)">self</span>.acl
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">2814</span>     write_result = <span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">_call_s3</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">"</span><span class="ansi-black-fg ansi-yellow-bg">put_object</span><span class="ansi-black-fg ansi-yellow-bg">"</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">kw</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">match</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">   2815</span> <span style="font-weight:bold;color:rgb(0,135,0)">else</span>:
+<span class="ansi-green-fg">   2816</span>     <span style="font-weight:bold;color:rgb(0,135,0)">raise</span> <span style="font-weight:bold;color:rgb(215,95,95)">RuntimeError</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">/opt/python/lib/python3.14/site-packages/s3fs/core.py:2641</span>, in <span class="ansi-cyan-fg">S3File._call_s3</span><span class="ansi-blue-fg">(self, method, *kwarglist, **kwargs)</span>
+<span class="ansi-green-fg">   2640</span> <span style="font-weight:bold;color:rgb(0,135,0)">def</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg">_call_s3</span>(<span style="color:rgb(0,135,0)">self</span>, method, *kwarglist, **kwargs):
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">2641</span>     <span style="font-weight:bold;color:rgb(0,135,0)">return</span> <span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">fs</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">call_s3</span><span class="ansi-black-fg ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">   2642</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">method</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   2643</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">s3_additional_kwargs</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   2644</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">_request_payer_kw</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   2645</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">kwarglist</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   2646</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">kwargs</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   2647</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">/opt/python/lib/python3.14/site-packages/fsspec/asyn.py:217</span>, in <span class="ansi-cyan-fg">sync_wrapper.&lt;locals&gt;.wrapper</span><span class="ansi-blue-fg">(*args, **kwargs)</span>
+<span class="ansi-green-fg">    214</span> <span style="color:rgb(175,0,255)">@functools</span>.wraps(func)
+<span class="ansi-green-fg">    215</span> <span style="font-weight:bold;color:rgb(0,135,0)">def</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg">wrapper</span>(*args, **kwargs):
+<span class="ansi-green-fg">    216</span>     <span style="color:rgb(0,135,0)">self</span> = obj <span style="font-weight:bold;color:rgb(175,0,255)">or</span> args[<span class="ansi-green-fg">0</span>]
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">217</span>     <span style="font-weight:bold;color:rgb(0,135,0)">return</span> <span class="ansi-black-fg ansi-yellow-bg">sync</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">loop</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">func</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">args</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">kwargs</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">/opt/python/lib/python3.14/site-packages/fsspec/asyn.py:106</span>, in <span class="ansi-cyan-fg">sync</span><span class="ansi-blue-fg">(loop, func, timeout, *args, **kwargs)</span>
+<span class="ansi-green-fg">    104</span>     <span style="font-weight:bold;color:rgb(0,135,0)">raise</span> FSTimeoutError <span style="font-weight:bold;color:rgb(0,135,0)">from</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg ansi-bold">return_result</span>
+<span class="ansi-green-fg">    105</span> <span style="font-weight:bold;color:rgb(0,135,0)">elif</span> <span style="color:rgb(0,135,0)">isinstance</span>(return_result, <span style="font-weight:bold;color:rgb(215,95,95)">BaseException</span>):
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">106</span>     <span style="font-weight:bold;color:rgb(0,135,0)">raise</span> return_result
+<span class="ansi-green-fg">    107</span> <span style="font-weight:bold;color:rgb(0,135,0)">else</span>:
+<span class="ansi-green-fg">    108</span>     <span style="font-weight:bold;color:rgb(0,135,0)">return</span> return_result
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">/opt/python/lib/python3.14/site-packages/fsspec/asyn.py:59</span>, in <span class="ansi-cyan-fg">_runner</span><span class="ansi-blue-fg">(event, coro, result, timeout)</span>
+<span class="ansi-green-fg">     57</span>     coro = asyncio.wait_for(coro, timeout=timeout)
+<span class="ansi-green-fg">     58</span> <span style="font-weight:bold;color:rgb(0,135,0)">try</span>:
+<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">59</span>     result[<span class="ansi-green-fg">0</span>] = <span style="font-weight:bold;color:rgb(0,135,0)">await</span> coro
+<span class="ansi-green-fg">     60</span> <span style="font-weight:bold;color:rgb(0,135,0)">except</span> <span style="font-weight:bold;color:rgb(215,95,95)">Exception</span> <span style="font-weight:bold;color:rgb(0,135,0)">as</span> ex:
+<span class="ansi-green-fg">     61</span>     result[<span class="ansi-green-fg">0</span>] = ex
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">/opt/python/lib/python3.14/site-packages/s3fs/core.py:466</span>, in <span class="ansi-cyan-fg">S3FileSystem._call_s3</span><span class="ansi-blue-fg">(self, method, *akwarglist, **kwargs)</span>
+<span class="ansi-green-fg">    464</span> logger.debug(<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">CALL: </span><span style="font-weight:bold;color:rgb(175,95,135)">%s</span><span class="ansi-yellow-fg"> - </span><span style="font-weight:bold;color:rgb(175,95,135)">%s</span><span class="ansi-yellow-fg"> - </span><span style="font-weight:bold;color:rgb(175,95,135)">%s</span><span class="ansi-yellow-fg">"</span>, method.<span class="ansi-blue-fg">__name__</span>, akwarglist, kw2)
+<span class="ansi-green-fg">    465</span> additional_kwargs = <span style="color:rgb(0,135,0)">self</span>._get_s3_method_kwargs(method, *akwarglist, **kwargs)
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">466</span> <span style="font-weight:bold;color:rgb(0,135,0)">return</span> <span style="font-weight:bold;color:rgb(0,135,0)">await</span> _error_wrapper(
+<span class="ansi-green-fg">    467</span>     method, kwargs=additional_kwargs, retries=<span style="color:rgb(0,135,0)">self</span>.retries
+<span class="ansi-green-fg">    468</span> )
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">/opt/python/lib/python3.14/site-packages/s3fs/core.py:216</span>, in <span class="ansi-cyan-fg">_error_wrapper</span><span class="ansi-blue-fg">(func, args, kwargs, retries)</span>
+<span class="ansi-green-fg">    214</span>             err = e
+<span class="ansi-green-fg">    215</span> err = translate_boto_error(err)
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">216</span> <span style="font-weight:bold;color:rgb(0,135,0)">raise</span> err
+
+<span class="ansi-red-fg">PermissionError</span>: Access Denied.</pre>
+</div>
+</div>
+</div>
+<p>Etudes par densité des communautés</p>
+<div id="f1e2143a" class="cell" data-execution_count="12">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>dens <span class="op">=</span> pd.read_csv(base <span class="op">+</span> <span class="st">"densite_communes_2025.csv"</span>, dtype<span class="op">=</span><span class="bu">str</span>)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>cols_dens <span class="op">=</span> [<span class="st">"DENS"</span>, <span class="st">"LIBDENS"</span>, <span class="st">"DENS7"</span>, <span class="st">"LIBDENS7"</span>]</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>fusion <span class="op">=</span> fusion.drop(columns<span class="op">=</span>cols_dens).merge(</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    dens[[<span class="st">"CODGEO"</span>] <span class="op">+</span> cols_dens], on<span class="op">=</span><span class="st">"CODGEO"</span>, how<span class="op">=</span><span class="st">"left"</span>, validate<span class="op">=</span><span class="st">"one_to_one"</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(fusion[<span class="st">"LIBDENS"</span>].isna().<span class="bu">sum</span>(), fusion.shape)   <span class="co"># attendu : 0 (34858, 23)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>0 (34858, 45)</code></pre>
+</div>
+</div>
+<p>Regardons par population</p>
+<div id="46fbc231" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co">#fusion["a_etablissement"] = fusion["nb_etablissements"] &gt; 0</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co">#fusion["population"] = pd.to_numeric(fusion["population"], errors="coerce")</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co">#tableau = fusion.groupby("LIBDENS", dropna=False)["a_etablissement"].agg(</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">#nb_communes="count", part_communes_equipees="mean")</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="co">#tableau["part_communes_equipees"] = (tableau["part_communes_equipees"] * 100).round(1)</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="co">#pop_tot = fusion.groupby("LIBDENS", dropna=False)["population"].sum()</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a><span class="co">#pop_avec = fusion[fusion["a_etablissement"]].groupby("LIBDENS", dropna=False)["population"].sum()</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a><span class="co">#tableau["part_population_desservie"] = (pop_avec / pop_tot * 100).round(1)</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a><span class="co">#print(tableau)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre>  <span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[13]</span><span class="ansi-green-fg">, line 6</span>
+<span class="ansi-red-fg">    </span><span class="ansi-red-fg">)</span>
+    ^
+<span class="ansi-red-fg">SyntaxError</span><span class="ansi-red-fg">:</span> unmatched ')'
+</pre>
+</div>
+</div>
+</div>
+<section id="partie-3-fusion-avec-loffre-de-soins-de-ville-rpps" class="level2">
+<h2 class="anchored" data-anchor-id="partie-3-fusion-avec-loffre-de-soins-de-ville-rpps">Partie 3 : fusion avec l’offre de soins de ville (RPPS)</h2>
+<div id="6b3ef0f0" class="cell" data-execution_count="13">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Chargement de l'offre de soins de ville déjà agrégée par commune</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>rpps <span class="op">=</span> pd.read_csv(</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    base <span class="op">+</span> <span class="st">"offre_soins_commune.csv"</span>,</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>    dtype<span class="op">=</span>{<span class="st">"Code commune (coord. structure)"</span>: <span class="bu">str</span>}</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(rpps.shape)</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(rpps.head())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>(17213, 3)
+  Code commune (coord. structure) Libellé commune (coord. structure)  \
+0                           00000                            Inconnu   
+1                           01001            L'Abergement-Clémenciat   
+2                           01002              L'Abergement-de-Varey   
+3                           01004                  Ambérieu-en-Bugey   
+4                           01005                Ambérieux-en-Dombes   
+
+   nb_professionnels  
+0                  9  
+1                  1  
+2                  1  
+3                521  
+4                 29  </code></pre>
+</div>
+</div>
+<p>La table RPPS est déjà agrégée au niveau communal.</p>
+<p>On harmonise son code commune avec le même traitement que celui utilisé plus haut pour FINESS-SYGEN, notamment pour les arrondissements de Paris, Lyon et Marseille.</p>
+<div id="4895b993" class="cell" data-execution_count="14">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>rpps <span class="op">=</span> rpps.rename(</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    columns<span class="op">=</span>{</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Code commune (coord. structure)"</span>: <span class="st">"CODGEO"</span>,</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Libellé commune (coord. structure)"</span>: <span class="st">"LIBGEO_RPPS"</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>rpps <span class="op">=</span> rpps.dropna(subset<span class="op">=</span>[<span class="st">"CODGEO"</span>]).copy()</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Même harmonisation géographique que pour FINESS-SYGEN</span></span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>rpps[<span class="st">"CODGEO_ORIG"</span>] <span class="op">=</span> rpps[<span class="st">"CODGEO"</span>]</span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>rpps[<span class="st">"CODGEO"</span>] <span class="op">=</span> rpps[<span class="st">"CODGEO"</span>].<span class="bu">map</span>(harmoniser)</span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>rpps[<span class="st">"nb_professionnels"</span>] <span class="op">=</span> pd.to_numeric(</span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>    rpps[<span class="st">"nb_professionnels"</span>],</span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a>    errors<span class="op">=</span><span class="st">"coerce"</span></span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Communes distinctes avant harmonisation :"</span>, rpps[<span class="st">"CODGEO_ORIG"</span>].nunique())</span>
+<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Communes distinctes après harmonisation :"</span>, rpps[<span class="st">"CODGEO"</span>].nunique())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Communes distinctes avant harmonisation : 17213
+Communes distinctes après harmonisation : 17168</code></pre>
+</div>
+</div>
+<p>Après harmonisation, plusieurs lignes peuvent désormais correspondre à une même commune, notamment pour Paris, Lyon et Marseille.</p>
+<p>On réagrège donc l’offre au niveau du <code>CODGEO</code> harmonisé avant la fusion finale.</p>
+<div id="1b516132" class="cell" data-execution_count="15">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>rpps_commune <span class="op">=</span> (</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>    rpps</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>    .groupby(<span class="st">"CODGEO"</span>, as_index<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>    .agg(</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>        nb_professionnels<span class="op">=</span>(<span class="st">"nb_professionnels"</span>, <span class="st">"sum"</span>)</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(rpps_commune.shape)</span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Doublons CODGEO :"</span>, rpps_commune[<span class="st">"CODGEO"</span>].duplicated().<span class="bu">sum</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>(17168, 2)
+Doublons CODGEO : 0</code></pre>
+</div>
+</div>
+</section>
+<section id="contrôle-de-la-couverture-géographique-du-rpps" class="level2">
+<h2 class="anchored" data-anchor-id="contrôle-de-la-couverture-géographique-du-rpps">Contrôle de la couverture géographique du RPPS</h2>
+<div id="60c2923f" class="cell" data-execution_count="16">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>codes_insee <span class="op">=</span> <span class="bu">set</span>(fusion[<span class="st">"CODGEO"</span>].dropna())</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>codes_rpps <span class="op">=</span> <span class="bu">set</span>(rpps_commune[<span class="st">"CODGEO"</span>].dropna())</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Communes dans la base INSEE + hôpitaux :"</span>, <span class="bu">len</span>(codes_insee))</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Communes dans le RPPS :"</span>, <span class="bu">len</span>(codes_rpps))</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Communes INSEE sans ligne RPPS :"</span>, <span class="bu">len</span>(codes_insee <span class="op">-</span> codes_rpps))</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Codes RPPS absents de l'INSEE :"</span>, <span class="bu">len</span>(codes_rpps <span class="op">-</span> codes_insee))</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Exemples de codes RPPS hors INSEE :"</span>)</span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">sorted</span>(codes_rpps <span class="op">-</span> codes_insee)[:<span class="dv">20</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Communes dans la base INSEE + hôpitaux : 34858
+Communes dans le RPPS : 17168
+Communes INSEE sans ligne RPPS : 18143
+Codes RPPS absents de l'INSEE : 453
+
+Exemples de codes RPPS hors INSEE :
+['00000', '01055', '01091', '01154', '01330', '02077', '02300', '02630', '02700', '03153', '04056', '04196', '04198', '05002', '05069', '05143', '05175', '08443', '12076', '12114']</code></pre>
+</div>
+</div>
+</section>
+<section id="fusion-finale-avec-loffre-de-soins-de-ville" class="level2">
+<h2 class="anchored" data-anchor-id="fusion-finale-avec-loffre-de-soins-de-ville">Fusion finale avec l’offre de soins de ville</h2>
+<div id="00a2315b" class="cell" data-execution_count="17">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>base_finale <span class="op">=</span> fusion.merge(</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>    rpps_commune,</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>    on<span class="op">=</span><span class="st">"CODGEO"</span>,</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>    how<span class="op">=</span><span class="st">"left"</span>,</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>    validate<span class="op">=</span><span class="st">"one_to_one"</span></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Une commune sans ligne dans l'agrégat RPPS reçoit 0 professionnel compté.</span></span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>base_finale[<span class="st">"nb_professionnels"</span>] <span class="op">=</span> (</span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>    base_finale[<span class="st">"nb_professionnels"</span>]</span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>    .fillna(<span class="dv">0</span>)</span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>    .astype(<span class="bu">int</span>)</span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Dimensions finales :"</span>, base_finale.shape)</span>
+<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Communes distinctes :"</span>, base_finale[<span class="st">"CODGEO"</span>].nunique())</span>
+<span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Doublons CODGEO :"</span>, base_finale[<span class="st">"CODGEO"</span>].duplicated().<span class="bu">sum</span>())</span>
+<span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">len</span>(base_finale) <span class="op">==</span> <span class="bu">len</span>(fusion)</span>
+<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="kw">not</span> base_finale[<span class="st">"CODGEO"</span>].duplicated().<span class="bu">any</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Dimensions finales : (34858, 46)
+Communes distinctes : 34858
+Doublons CODGEO : 0</code></pre>
+</div>
+</div>
+</section>
+<section id="vérifications-finales" class="level2">
+<h2 class="anchored" data-anchor-id="vérifications-finales">Vérifications finales</h2>
+<div id="a5dc11eb" class="cell" data-execution_count="18">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>colonnes_controle <span class="op">=</span> [</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"CODGEO"</span>,</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"LIBGEO"</span>,</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"nb_professionnels"</span>,</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"nb_etablissements"</span>,</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"LIT_MCO"</span>,</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"LIT_SMR"</span>,</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"NB_SCAN"</span>,</span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">"NB_IRM"</span></span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>colonnes_controle <span class="op">=</span> [</span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>    col <span class="cf">for</span> col <span class="kw">in</span> colonnes_controle</span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> col <span class="kw">in</span> base_finale.columns</span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Dimensions :"</span>, base_finale.shape)</span>
+<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Valeurs manquantes :"</span>)</span>
+<span id="cb32-20"><a href="#cb32-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(base_finale[colonnes_controle].isna().<span class="bu">sum</span>())</span>
+<span id="cb32-21"><a href="#cb32-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-22"><a href="#cb32-22" aria-hidden="true" tabindex="-1"></a>base_finale.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Dimensions : (34858, 46)
+
+Valeurs manquantes :
+CODGEO                   0
+LIBGEO                   0
+nb_professionnels        0
+nb_etablissements        0
+LIT_MCO              33947
+LIT_SMR              33587
+NB_SCAN              34111
+NB_IRM               34111
+dtype: int64</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="18">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">CODGEO</th>
+<th data-quarto-table-cell-role="th">LIBGEO</th>
+<th data-quarto-table-cell-role="th">SEXE1_AGEPYR1000</th>
+<th data-quarto-table-cell-role="th">SEXE1_AGEPYR1003</th>
+<th data-quarto-table-cell-role="th">SEXE1_AGEPYR1006</th>
+<th data-quarto-table-cell-role="th">SEXE1_AGEPYR1011</th>
+<th data-quarto-table-cell-role="th">SEXE1_AGEPYR1018</th>
+<th data-quarto-table-cell-role="th">SEXE1_AGEPYR1025</th>
+<th data-quarto-table-cell-role="th">SEXE1_AGEPYR1040</th>
+<th data-quarto-table-cell-role="th">SEXE1_AGEPYR1055</th>
+<th data-quarto-table-cell-role="th">...</th>
+<th data-quarto-table-cell-role="th">LIT_USLD</th>
+<th data-quarto-table-cell-role="th">NB_SCAN</th>
+<th data-quarto-table-cell-role="th">NB_IRM</th>
+<th data-quarto-table-cell-role="th">NB_MAMM</th>
+<th data-quarto-table-cell-role="th">nb_etablissements</th>
+<th data-quarto-table-cell-role="th">DENS</th>
+<th data-quarto-table-cell-role="th">LIBDENS</th>
+<th data-quarto-table-cell-role="th">DENS7</th>
+<th data-quarto-table-cell-role="th">LIBDENS7</th>
+<th data-quarto-table-cell-role="th">nb_professionnels</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>01001</td>
+<td>L'Abergement-Clémenciat</td>
+<td>19.0</td>
+<td>15.0</td>
+<td>36.0</td>
+<td>42.0</td>
+<td>15.0</td>
+<td>77.0</td>
+<td>87.0</td>
+<td>66.0</td>
+<td>...</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>0</td>
+<td>3</td>
+<td>Rural</td>
+<td>6</td>
+<td>Rural à habitat dispersé</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>01002</td>
+<td>L'Abergement-de-Varey</td>
+<td>3.0</td>
+<td>6.0</td>
+<td>7.0</td>
+<td>22.0</td>
+<td>6.0</td>
+<td>20.0</td>
+<td>39.0</td>
+<td>12.0</td>
+<td>...</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>0</td>
+<td>3</td>
+<td>Rural</td>
+<td>6</td>
+<td>Rural à habitat dispersé</td>
+<td>1</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>01004</td>
+<td>Ambérieu-en-Bugey</td>
+<td>291.774098436508</td>
+<td>327.193219345162</td>
+<td>525.370991705619</td>
+<td>719.637561687717</td>
+<td>733.735171978173</td>
+<td>1581.24638491537</td>
+<td>1344.79206887329</td>
+<td>833.964092706198</td>
+<td>...</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>3</td>
+<td>2</td>
+<td>Urbain intermédiaire</td>
+<td>2</td>
+<td>Centres urbains intermédiaires</td>
+<td>521</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>01005</td>
+<td>Ambérieux-en-Dombes</td>
+<td>36.2624041600494</td>
+<td>37.108922388434</td>
+<td>65.9432761131205</td>
+<td>80.0820466018419</td>
+<td>54.4457784678517</td>
+<td>193.448597496766</td>
+<td>196.440979404838</td>
+<td>137.738813251787</td>
+<td>...</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>0</td>
+<td>3</td>
+<td>Rural</td>
+<td>5</td>
+<td>Bourgs ruraux</td>
+<td>29</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>01006</td>
+<td>Ambléon</td>
+<td>2.0</td>
+<td>1.0</td>
+<td>2.0</td>
+<td>1.0</td>
+<td>4.0</td>
+<td>12.0</td>
+<td>11.0</td>
+<td>14.0</td>
+<td>...</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>0</td>
+<td>3</td>
+<td>Rural</td>
+<td>6</td>
+<td>Rural à habitat dispersé</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+
+<p>5 rows × 46 columns</p>
+</div>
+</div>
+</div>
+</section>
+<section id="sauvegarde-de-la-base-communale-finale" class="level2">
+<h2 class="anchored" data-anchor-id="sauvegarde-de-la-base-communale-finale">Sauvegarde de la base communale finale</h2>
+<div id="12521147" class="cell" data-execution_count="19">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>output_path <span class="op">=</span> <span class="st">"s3://emma457/Projet_python/base_communes_finale.csv"</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>base_finale.to_csv(</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>    output_path,</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>    index<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>    storage_options<span class="op">=</span>opts</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Table finale enregistrée :"</span>, output_path)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">KeyboardInterrupt</span>                         Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[19]</span><span class="ansi-green-fg">, line 3</span>
+<span class="ansi-green-fg">      1</span> output_path = <span class="ansi-yellow-fg">"s3://emma457/Projet_python/base_communes_finale.csv"</span>
+<span class="ansi-green-fg">      2</span> 
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">3</span> base_finale.to_csv(
+<span class="ansi-green-fg">      4</span>     output_path,
+<span class="ansi-green-fg">      5</span>     index=<span style="font-weight:bold;color:rgb(0,135,0)">False</span>,
+<span class="ansi-green-fg">      6</span>     storage_options=opts
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">/opt/python/lib/python3.14/site-packages/pandas/core/generic.py:4026</span>, in <span class="ansi-cyan-fg">NDFrame.to_csv</span><span class="ansi-blue-fg">(self, path_or_buf, sep, na_rep, float_format, columns, header, index, index_label, mode, encoding, compression, quoting, quotechar, lineterminator, chunksize, date_format, doublequote, escapechar, decimal, errors, storage_options)</span>
+<span class="ansi-green-fg">   4022</span>             float_format=float_format,
+<span class="ansi-green-fg">   4023</span>             decimal=decimal,
+<span class="ansi-green-fg">   4024</span>         )
+<span class="ansi-green-fg">   4025</span> 
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">4026</span>         return DataFrameRenderer(formatter).to_csv(
+<span class="ansi-green-fg">   4027</span>             path_or_buf,
+<span class="ansi-green-fg">   4028</span>             lineterminator=lineterminator,
+<span class="ansi-green-fg">   4029</span>             sep=sep,
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">/opt/python/lib/python3.14/site-packages/pandas/io/formats/format.py:1027</span>, in <span class="ansi-cyan-fg">DataFrameRenderer.to_csv</span><span class="ansi-blue-fg">(self, path_or_buf, encoding, sep, columns, index_label, mode, compression, quoting, quotechar, lineterminator, chunksize, date_format, doublequote, escapechar, errors, storage_options)</span>
+<span class="ansi-green-fg">   1006</span>     created_buffer = <span style="font-weight:bold;color:rgb(0,135,0)">False</span>
+<span class="ansi-green-fg">   1008</span> csv_formatter = CSVFormatter(
+<span class="ansi-green-fg">   1009</span>     path_or_buf=path_or_buf,
+<span class="ansi-green-fg">   1010</span>     lineterminator=lineterminator,
+<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">   1025</span>     formatter=<span style="color:rgb(0,135,0)">self</span>.fmt,
+<span class="ansi-green-fg">   1026</span> )
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">1027</span> <span class="ansi-black-fg ansi-yellow-bg">csv_formatter</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">save</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">   1029</span> <span style="font-weight:bold;color:rgb(0,135,0)">if</span> created_buffer:
+<span class="ansi-green-fg">   1030</span>     <span style="font-weight:bold;color:rgb(0,135,0)">assert</span> <span style="color:rgb(0,135,0)">isinstance</span>(path_or_buf, StringIO)
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">/opt/python/lib/python3.14/site-packages/pandas/io/formats/csvs.py:251</span>, in <span class="ansi-cyan-fg">CSVFormatter.save</span><span class="ansi-blue-fg">(self)</span>
+<span class="ansi-green-fg">    247</span> <span style="font-style:italic" class="ansi-yellow-fg">"""</span>
+<span class="ansi-green-fg">    248</span> <span style="font-style:italic" class="ansi-yellow-fg">Create the writer &amp; save.</span>
+<span class="ansi-green-fg">    249</span> <span style="font-style:italic" class="ansi-yellow-fg">"""</span>
+<span class="ansi-green-fg">    250</span> <span style="font-style:italic;color:rgb(95,135,135)"># apply compression and byte/text conversion</span>
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">251</span> <span class="ansi-black-fg ansi-yellow-bg ansi-bold">with</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">get_handle</span><span class="ansi-black-fg ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">    252</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">filepath_or_buffer</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    253</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">mode</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    254</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">encoding</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">encoding</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    255</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">errors</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">errors</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    256</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">compression</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">compression</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    257</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">storage_options</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">storage_options</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    258</span> <span class="ansi-black-fg ansi-yellow-bg">)</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg ansi-bold">as</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">handles</span><span class="ansi-black-fg ansi-yellow-bg">:</span>
+<span class="ansi-green-fg">    259</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span style="font-style:italic" class="ansi-black-fg ansi-yellow-bg"># Note: self.encoding is irrelevant here</span>
+<span class="ansi-green-fg">    260</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span style="font-style:italic" class="ansi-black-fg ansi-yellow-bg"># error: Argument "quoting" to "writer" has incompatible type "int";</span>
+<span class="ansi-green-fg">    261</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span style="font-style:italic" class="ansi-black-fg ansi-yellow-bg"># expected "Literal[0, 1, 2, 3]"</span>
+<span class="ansi-green-fg">    262</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">writer</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">csvlib</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">writer</span><span class="ansi-black-fg ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">    263</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">handles</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">handle</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    264</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">lineterminator</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">lineterminator</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   (...)</span><span class="ansi-green-fg">    269</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">quotechar</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">quotechar</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">    270</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    272</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">_save</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">/opt/python/lib/python3.14/site-packages/pandas/io/common.py:154</span>, in <span class="ansi-cyan-fg">IOHandles.__exit__</span><span class="ansi-blue-fg">(self, exc_type, exc_value, traceback)</span>
+<span class="ansi-green-fg">    148</span> <span style="font-weight:bold;color:rgb(0,135,0)">def</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg">__exit__</span>(
+<span class="ansi-green-fg">    149</span>     <span style="color:rgb(0,135,0)">self</span>,
+<span class="ansi-green-fg">    150</span>     exc_type: <span style="color:rgb(0,135,0)">type</span>[<span style="font-weight:bold;color:rgb(215,95,95)">BaseException</span>] | <span style="font-weight:bold;color:rgb(0,135,0)">None</span>,
+<span class="ansi-green-fg">    151</span>     exc_value: <span style="font-weight:bold;color:rgb(215,95,95)">BaseException</span> | <span style="font-weight:bold;color:rgb(0,135,0)">None</span>,
+<span class="ansi-green-fg">    152</span>     traceback: TracebackType | <span style="font-weight:bold;color:rgb(0,135,0)">None</span>,
+<span class="ansi-green-fg">    153</span> ) -&gt; <span style="font-weight:bold;color:rgb(0,135,0)">None</span>:
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">154</span>     <span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">close</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">/opt/python/lib/python3.14/site-packages/pandas/io/common.py:141</span>, in <span class="ansi-cyan-fg">IOHandles.close</span><span class="ansi-blue-fg">(self)</span>
+<span class="ansi-green-fg">    139</span>     <span style="color:rgb(0,135,0)">self</span>.created_handles.remove(<span style="color:rgb(0,135,0)">self</span>.handle)
+<span class="ansi-green-fg">    140</span> <span style="font-weight:bold;color:rgb(0,135,0)">for</span> handle <span style="font-weight:bold;color:rgb(175,0,255)">in</span> <span style="color:rgb(0,135,0)">self</span>.created_handles:
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">141</span>     <span class="ansi-black-fg ansi-yellow-bg">handle</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">close</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    142</span> <span style="color:rgb(0,135,0)">self</span>.created_handles = []
+<span class="ansi-green-fg">    143</span> <span style="color:rgb(0,135,0)">self</span>.is_wrapped = <span style="font-weight:bold;color:rgb(0,135,0)">False</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">/opt/python/lib/python3.14/site-packages/fsspec/spec.py:2289</span>, in <span class="ansi-cyan-fg">AbstractBufferedFile.close</span><span class="ansi-blue-fg">(self)</span>
+<span class="ansi-green-fg">   2287</span> <span style="font-weight:bold;color:rgb(0,135,0)">else</span>:
+<span class="ansi-green-fg">   2288</span>     <span style="font-weight:bold;color:rgb(0,135,0)">if</span> <span style="font-weight:bold;color:rgb(175,0,255)">not</span> <span style="color:rgb(0,135,0)">getattr</span>(<span style="color:rgb(0,135,0)">self</span>, <span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">forced</span><span class="ansi-yellow-fg">"</span>, <span style="font-weight:bold;color:rgb(0,135,0)">True</span>):
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">2289</span>         <span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">flush</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">force</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg ansi-bold">True</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">   2291</span>     <span style="font-weight:bold;color:rgb(0,135,0)">if</span> <span style="color:rgb(0,135,0)">self</span>.fs <span style="font-weight:bold;color:rgb(175,0,255)">is</span> <span style="font-weight:bold;color:rgb(175,0,255)">not</span> <span style="font-weight:bold;color:rgb(0,135,0)">None</span>:
+<span class="ansi-green-fg">   2292</span>         <span style="color:rgb(0,135,0)">self</span>.fs.invalidate_cache(<span style="color:rgb(0,135,0)">self</span>.path)
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">/opt/python/lib/python3.14/site-packages/fsspec/spec.py:2147</span>, in <span class="ansi-cyan-fg">AbstractBufferedFile.flush</span><span class="ansi-blue-fg">(self, force)</span>
+<span class="ansi-green-fg">   2144</span>         <span style="color:rgb(0,135,0)">self</span>.closed = <span style="font-weight:bold;color:rgb(0,135,0)">True</span>
+<span class="ansi-green-fg">   2145</span>         <span style="font-weight:bold;color:rgb(0,135,0)">raise</span>
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">2147</span> <span style="font-weight:bold;color:rgb(0,135,0)">if</span> <span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">_upload_chunk</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">final</span><span class="ansi-black-fg ansi-yellow-bg">=</span><span class="ansi-black-fg ansi-yellow-bg">force</span><span class="ansi-black-fg ansi-yellow-bg">)</span> <span style="font-weight:bold;color:rgb(175,0,255)">is</span> <span style="font-weight:bold;color:rgb(175,0,255)">not</span> <span style="font-weight:bold;color:rgb(0,135,0)">False</span>:
+<span class="ansi-green-fg">   2148</span>     <span style="color:rgb(0,135,0)">self</span>.offset += <span style="color:rgb(0,135,0)">self</span>.buffer.seek(<span class="ansi-green-fg">0</span>, <span class="ansi-green-fg">2</span>)
+<span class="ansi-green-fg">   2149</span>     <span style="color:rgb(0,135,0)">self</span>.buffer = io.BytesIO()
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">/opt/python/lib/python3.14/site-packages/s3fs/core.py:2788</span>, in <span class="ansi-cyan-fg">S3File._upload_chunk</span><span class="ansi-blue-fg">(self, final)</span>
+<span class="ansi-green-fg">   2785</span>             upload_part(<span style="color:rgb(0,135,0)">self</span>.buffer.read(<span style="color:rgb(0,135,0)">self</span>.part_max))
+<span class="ansi-green-fg">   2787</span> <span style="font-weight:bold;color:rgb(0,135,0)">if</span> <span style="color:rgb(0,135,0)">self</span>.autocommit <span style="font-weight:bold;color:rgb(175,0,255)">and</span> final:
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">2788</span>     <span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">commit</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">   2789</span> <span style="font-weight:bold;color:rgb(0,135,0)">else</span>:
+<span class="ansi-green-fg">   2790</span>     <span style="font-style:italic;color:rgb(95,135,135)"># update 'upload offset'</span>
+<span class="ansi-green-fg">   2791</span>     <span style="color:rgb(0,135,0)">self</span>.offset += <span style="color:rgb(0,135,0)">self</span>.buffer.tell()
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">/opt/python/lib/python3.14/site-packages/s3fs/core.py:2814</span>, in <span class="ansi-cyan-fg">S3File.commit</span><span class="ansi-blue-fg">(self)</span>
+<span class="ansi-green-fg">   2812</span>     <span style="font-weight:bold;color:rgb(0,135,0)">if</span> <span style="color:rgb(0,135,0)">self</span>.acl:
+<span class="ansi-green-fg">   2813</span>         kw[<span class="ansi-yellow-fg">"</span><span class="ansi-yellow-fg">ACL</span><span class="ansi-yellow-fg">"</span>] = <span style="color:rgb(0,135,0)">self</span>.acl
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">2814</span>     write_result = <span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">_call_s3</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">"</span><span class="ansi-black-fg ansi-yellow-bg">put_object</span><span class="ansi-black-fg ansi-yellow-bg">"</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">kw</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">match</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">   2815</span> <span style="font-weight:bold;color:rgb(0,135,0)">else</span>:
+<span class="ansi-green-fg">   2816</span>     <span style="font-weight:bold;color:rgb(0,135,0)">raise</span> <span style="font-weight:bold;color:rgb(215,95,95)">RuntimeError</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">/opt/python/lib/python3.14/site-packages/s3fs/core.py:2641</span>, in <span class="ansi-cyan-fg">S3File._call_s3</span><span class="ansi-blue-fg">(self, method, *kwarglist, **kwargs)</span>
+<span class="ansi-green-fg">   2640</span> <span style="font-weight:bold;color:rgb(0,135,0)">def</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg">_call_s3</span>(<span style="color:rgb(0,135,0)">self</span>, method, *kwarglist, **kwargs):
+<span class="ansi-green-fg">-&gt; </span><span class="ansi-green-fg">2641</span>     <span style="font-weight:bold;color:rgb(0,135,0)">return</span> <span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">fs</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">call_s3</span><span class="ansi-black-fg ansi-yellow-bg">(</span>
+<span class="ansi-green-fg">   2642</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">method</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   2643</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">s3_additional_kwargs</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   2644</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">_request_payer_kw</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   2645</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">kwarglist</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   2646</span> <span class="ansi-black-fg ansi-yellow-bg">        </span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">kwargs</span><span class="ansi-black-fg ansi-yellow-bg">,</span>
+<span class="ansi-green-fg">   2647</span> <span class="ansi-black-fg ansi-yellow-bg">    </span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">/opt/python/lib/python3.14/site-packages/fsspec/asyn.py:217</span>, in <span class="ansi-cyan-fg">sync_wrapper.&lt;locals&gt;.wrapper</span><span class="ansi-blue-fg">(*args, **kwargs)</span>
+<span class="ansi-green-fg">    214</span> <span style="color:rgb(175,0,255)">@functools</span>.wraps(func)
+<span class="ansi-green-fg">    215</span> <span style="font-weight:bold;color:rgb(0,135,0)">def</span><span style="color:rgb(188,188,188)"> </span><span class="ansi-blue-fg">wrapper</span>(*args, **kwargs):
+<span class="ansi-green-fg">    216</span>     <span style="color:rgb(0,135,0)">self</span> = obj <span style="font-weight:bold;color:rgb(175,0,255)">or</span> args[<span class="ansi-green-fg">0</span>]
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">217</span>     <span style="font-weight:bold;color:rgb(0,135,0)">return</span> <span class="ansi-black-fg ansi-yellow-bg">sync</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">loop</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">func</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">args</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">*</span><span class="ansi-black-fg ansi-yellow-bg">kwargs</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">/opt/python/lib/python3.14/site-packages/fsspec/asyn.py:94</span>, in <span class="ansi-cyan-fg">sync</span><span class="ansi-blue-fg">(loop, func, timeout, *args, **kwargs)</span>
+<span class="ansi-green-fg">     91</span> asyncio.run_coroutine_threadsafe(_runner(event, coro, result, timeout), loop)
+<span class="ansi-green-fg">     92</span> <span style="font-weight:bold;color:rgb(0,135,0)">while</span> <span style="font-weight:bold;color:rgb(0,135,0)">True</span>:
+<span class="ansi-green-fg">     93</span>     <span style="font-style:italic;color:rgb(95,135,135)"># this loops allows thread to get interrupted</span>
+<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">94</span>     <span style="font-weight:bold;color:rgb(0,135,0)">if</span> <span class="ansi-black-fg ansi-yellow-bg">event</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">wait</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">1</span><span class="ansi-black-fg ansi-yellow-bg">)</span>:
+<span class="ansi-green-fg">     95</span>         <span style="font-weight:bold;color:rgb(0,135,0)">break</span>
+<span class="ansi-green-fg">     96</span>     <span style="font-weight:bold;color:rgb(0,135,0)">if</span> timeout <span style="font-weight:bold;color:rgb(175,0,255)">is</span> <span style="font-weight:bold;color:rgb(175,0,255)">not</span> <span style="font-weight:bold;color:rgb(0,135,0)">None</span>:
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">/opt/python/lib/python3.14/threading.py:670</span>, in <span class="ansi-cyan-fg">Event.wait</span><span class="ansi-blue-fg">(self, timeout)</span>
+<span class="ansi-green-fg">    668</span> signaled = <span style="color:rgb(0,135,0)">self</span>._flag
+<span class="ansi-green-fg">    669</span> <span style="font-weight:bold;color:rgb(0,135,0)">if</span> <span style="font-weight:bold;color:rgb(175,0,255)">not</span> signaled:
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">670</span>     signaled = <span class="ansi-black-fg ansi-yellow-bg">self</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">_cond</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">wait</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg">timeout</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    671</span> <span style="font-weight:bold;color:rgb(0,135,0)">return</span> signaled
+
+<span class="ansi-cyan-fg">File </span><span class="ansi-green-fg">/opt/python/lib/python3.14/threading.py:373</span>, in <span class="ansi-cyan-fg">Condition.wait</span><span class="ansi-blue-fg">(self, timeout)</span>
+<span class="ansi-green-fg">    371</span> <span style="font-weight:bold;color:rgb(0,135,0)">else</span>:
+<span class="ansi-green-fg">    372</span>     <span style="font-weight:bold;color:rgb(0,135,0)">if</span> timeout &gt; <span class="ansi-green-fg">0</span>:
+<span class="ansi-green-fg">--&gt; </span><span class="ansi-green-fg">373</span>         gotit = <span class="ansi-black-fg ansi-yellow-bg">waiter</span><span class="ansi-black-fg ansi-yellow-bg">.</span><span class="ansi-black-fg ansi-yellow-bg">acquire</span><span class="ansi-black-fg ansi-yellow-bg">(</span><span class="ansi-black-fg ansi-yellow-bg ansi-bold">True</span><span class="ansi-black-fg ansi-yellow-bg">,</span><span class="ansi-black-fg ansi-yellow-bg"> </span><span class="ansi-black-fg ansi-yellow-bg">timeout</span><span class="ansi-black-fg ansi-yellow-bg">)</span>
+<span class="ansi-green-fg">    374</span>     <span style="font-weight:bold;color:rgb(0,135,0)">else</span>:
+<span class="ansi-green-fg">    375</span>         gotit = waiter.acquire(<span style="font-weight:bold;color:rgb(0,135,0)">False</span>)
+
+<span class="ansi-red-fg">KeyboardInterrupt</span>: </pre>
+</div>
+</div>
+</div>
+</section>
+<section id="résultat" class="level2">
+<h2 class="anchored" data-anchor-id="résultat">Résultat</h2>
+<p>La base finale part désormais directement de la fusion construite précédemment :</p>
+<pre class="text"><code>INSEE + FINESS-SYGEN</code></pre>
+<p>puis ajoute :</p>
+<pre class="text"><code>+ RPPS</code></pre>
+<p>On évite ainsi de refaire l’agrégation FINESS-SYGEN déjà réalisée dans ce notebook.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+      window.quartoDecorateExternalLinks = function (root) {
+     var links = (root || window.document).querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+          if (!link.classList.contains('no-external-icon')) {
+          }
+        }
+      }
+      };
+      window.quartoDecorateExternalLinks(window.document);
+    // Esc closes the popup (WCAG 1.4.13) and focus leaving both trigger and
+    // popup closes it (WCAG 2.4.11); tippy handles neither for interactive popups.
+    const hideOnEscAndFocusOut = {
+      name: 'hideOnEscAndFocusOut',
+      defaultValue: true,
+      fn(instance) {
+        const dismiss = () => {
+          // A show scheduled by the trigger delay would otherwise reopen it
+          instance.clearDelayTimeouts();
+          instance.hide();
+        };
+        const onKeyDown = (event) => {
+          if (event.key !== 'Escape') {
+            return;
+          }
+          // Keep Esc from also reaching page handlers (e.g. reveal.js overview),
+          // except an open reveal.js slide menu, which Esc should close too.
+          // The menu handles keys only when its keyboard option is on.
+          const menuHandlesEsc = window.Reveal?.getPlugin?.('menu')?.isOpen() &&
+            window.Reveal.getConfig().menu?.keyboard !== false;
+          if (!menuHandlesEsc) {
+            event.stopPropagation();
+          }
+          if (instance.popper.contains(window.document.activeElement)) {
+            // Disabled while refocusing so the focus trigger does not reopen it
+            instance.disable();
+            instance.reference.focus();
+            instance.enable();
+          }
+          dismiss();
+        };
+        const onFocusOut = (event) => {
+          const target = event.relatedTarget;
+          if (target && !instance.reference.contains(target) &&
+              !instance.popper.contains(target)) {
+            dismiss();
+          }
+        };
+        // On the trigger too: a click trigger (code-annotations: select) has no
+        // blur handling. Attached for the instance's lifetime so leaving the
+        // trigger also cancels a show still pending on the trigger delay.
+        instance.reference.addEventListener('focusout', onFocusOut);
+        return {
+          onShow() {
+            window.document.addEventListener('keydown', onKeyDown, true);
+            instance.popper.addEventListener('focusout', onFocusOut);
+          },
+          onHide() {
+            window.document.removeEventListener('keydown', onKeyDown, true);
+            instance.popper.removeEventListener('focusout', onFocusOut);
+          },
+          onDestroy() {
+            instance.reference.removeEventListener('focusout', onFocusOut);
+          },
+        };
+      },
+    };
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+        plugins: [hideOnEscAndFocusOut],
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          // Each band is positioned against its own containing block, which is
+          // not the offsetParent of the lines, so place it from client rects.
+          const placeBand = (band, firstEl, lastEl, codeBlock) => {
+            const container = band.offsetParent;
+            if (container === null) {
+              return;
+            }
+            const containerRect = container.getBoundingClientRect();
+            // Reveal.js scales slides with a transform, so convert client
+            // pixels back to the CSS pixels of the container.
+            const scale = containerRect.height / container.offsetHeight || 1;
+            const firstRect = firstEl.getBoundingClientRect();
+            const lastRect = lastEl.getBoundingClientRect();
+            const top = (firstRect.top - containerRect.top) / scale - container.clientTop + container.scrollTop;
+            const height = (lastRect.bottom - firstRect.top) / scale;
+            band.style.top = top - 2 + "px";
+            band.style.height = height + 4 + "px";
+            if (codeBlock) {
+              // Without the copy button wrapper, the containing block is wider
+              // than the code block, so span the code block explicitly.
+              const blockRect = codeBlock.getBoundingClientRect();
+              band.style.left = (blockRect.left - containerRect.left) / scale - container.clientLeft + container.scrollLeft + "px";
+              band.style.width = blockRect.width / scale + "px";
+            }
+          };
+          if (lineIds.length > 0) {
+            const el = window.document.getElementById(lineIds[0]);
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const parent = el.parentElement.parentElement;
+            // cook up a div (if necessary) and position it
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            placeBand(div, el, lastEl, parent.closest("div.sourceCode") || parent);
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            placeBand(gutterDiv, el, lastEl);
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+  <script type="application/javascript">
+  window.quartoScrollableRegionsLabels = {"code":"Scrollable code","output":"Scrollable output"};
+  </script>
+</div> <!-- /content -->
+
+
+
+
+<script src="../../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>
