@@ -1,0 +1,35 @@
+---
+title: "Inégalités territoriales"
+---
+
+## Densité territoriale
+
+![](src/outputs/figures/14_accessibilite_densite_ponderee.png){width=80%}
+
+L’accessibilité peut être comparée entre territoires selon leur niveau de densité afin d’identifier les différences entre espaces urbains, intermédiaires et ruraux.
+
+## Niveau de vie
+
+![](src/outputs/figures/15_accessibilite_niveau_vie.png){width=78%}
+
+## Pauvreté
+
+![](src/outputs/figures/16_accessibilite_pauvrete.png){width=78%}
+
+## Vieillissement de la population
+
+![](src/outputs/figures/17_accessibilite_age.png){width=78%}
+
+## Accessibilité et offre sanitaire
+
+![](src/outputs/figures/18_correlations_offre_sanitaire.png){width=82%}
+
+Cette analyse étudie les associations entre l’accessibilité aux médecins généralistes et différentes dimensions de l’offre sanitaire.
+
+::: {.callout-warning}
+Ces résultats sont **descriptifs**. Une corrélation observée entre deux variables ne permet pas de conclure à une relation causale.
+:::
+
+## Disparités départementales
+
+![](src/outputs/figures/19_departements_extremes.png){width=82%}

@@ -1,0 +1,44 @@
+project:
+  type: website
+  output-dir: _site
+  render:
+    - index.qmd
+    - methodologie.qmd
+    - resultats.qmd
+    - inegalites.qmd
+    - cartes.qmd
+    - limites.qmd
+  resources:
+    - src/outputs/**
+
+website:
+  title: "Accessibilité aux soins médicaux en France"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Accueil
+      - href: methodologie.qmd
+        text: Méthodologie
+      - href: resultats.qmd
+        text: Résultats
+      - href: inegalites.qmd
+        text: Inégalités territoriales
+      - href: cartes.qmd
+        text: Cartes
+      - href: limites.qmd
+        text: Limites
+    right:
+      - icon: github
+        href: https://github.com/Chaimaa-ui77/Analyse-d-accessibilite-des-soins-medicaux
+        aria-label: GitHub
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    toc: true
+    toc-depth: 2
+    smooth-scroll: true
+
+execute:
+  freeze: true

@@ -1,0 +1,59 @@
+---
+title: "Limites et reproductibilité"
+---
+
+## Limites de l’indicateur
+
+L’indicateur mesure une **accessibilité potentielle** et non le recours réellement observé aux soins.
+
+Il ne prend pas directement en compte :
+
+- les délais de rendez-vous ;
+- l’acceptation de nouveaux patients ;
+- le temps de travail réel de chaque médecin ;
+- les préférences individuelles des patients ;
+- les dépassements d’honoraires ;
+- les déplacements effectivement réalisés.
+
+Les seuils de 10, 15 et 20 minutes ainsi que les poids associés constituent également des choix méthodologiques du projet.
+
+## Échelle communale
+
+Le travail à l’échelle communale offre une lecture territoriale fine mais masque les différences internes aux communes, notamment dans les plus grandes villes.
+
+## Reproductibilité
+
+Le dépôt GitHub contient les notebooks nécessaires aux principales étapes :
+
+```text
+Préparation des données
+        ↓
+Harmonisation géographique
+        ↓
+Distances et temps routiers
+        ↓
+Construction de l'offre et de la demande
+        ↓
+Calcul de l'indicateur
+        ↓
+Fusion finale
+        ↓
+Analyses statistiques et cartographiques
+```
+
+Les dépendances Python sont listées dans `requirements.txt`.
+
+Les graphiques, tableaux et cartes utilisés dans ce site sont générés dans :
+
+```text
+src/outputs/
+├── tables/
+├── figures/
+└── cartes/
+```
+
+## Code source
+
+Le projet complet est disponible sur GitHub :
+
+<https://github.com/Chaimaa-ui77/Analyse-d-accessibilite-des-soins-medicaux>
