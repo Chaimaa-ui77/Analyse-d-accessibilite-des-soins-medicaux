@@ -1,6 +1,13 @@
 pandas
+numpy
+matplotlib
 geopandas
+shapely
+pyarrow
 openpyxl
 s3fs
 ijson
 requests
+tqdm
+scikit-learn
+folium
